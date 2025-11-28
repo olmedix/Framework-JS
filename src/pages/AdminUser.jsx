@@ -4,7 +4,7 @@ import { useState,useEffect } from "../core/hooks.js";
 export function AdminUser() {
 
   const [users,setUsers] = useState([]);
-  const [loading,setLoading] = useState([true]);
+  const [loading,setLoading] = useState(true);
   const [error,setError] = useState(null);
 
   useEffect( () => {

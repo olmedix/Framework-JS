@@ -1,64 +1,43 @@
-let currentRoot = null;
-
-export function getCurrentRoot() {
-  return currentRoot;
-}
+import {
+  beginComponentInstance,
+  endComponentInstance,
+  createComponentInstance,
+  runEffectsForInstance,
+} from "./hooks.js";
 
 export function createRoot(Component, container, initialProps = {}) {
-  const root = {
-    Component,
-    container,
-    props: initialProps,
-    hooks: [],
-    hookIndex: 0,
-    effects: [],
-    effectIndex: 0,
-  };
-
-  function runEffects() {
-    for (const effect of root.effects) {
-      // Saltamos los effects que no afectan a sus dependencias
-      if (!effect || !effect.shouldRun) continue;
-
-      // Si había un cleanup anterior, lo ejecutamos
-      if (typeof effect.cleanup === "function") {
-        effect.cleanup();
-      }
-      // Aquí se ejecuta realmente el useEffect
-      const cleanup = effect.callback();
-      // Guardamos el cleanup si el callback ha devuelto uno
-      effect.cleanup = typeof cleanup === "function" ? cleanup : undefined;
-      // Marcamos que el efecto ya se ejecutó
-      effect.shouldRun = false;
-    }
-  }
+  // Creamos una instancia raíz
+  const rootInstance = createComponentInstance(Component, null);
+  rootInstance.root = rootInstance;   // el root de sí mismo es él mismo
+  rootInstance.props = initialProps;
+  rootInstance.container = container;
 
   function render() {
-    currentRoot = root;
-    root.hookIndex = 0;
-    root.effectIndex = 0;
+    rootInstance.render = render; // para que los hooks puedan llamarlo
 
-    const vnode = root.Component(root.props || {});
+    // Ejecutamos el componente raíz como instancia
+    beginComponentInstance(rootInstance);
+    const vnode = rootInstance.type(rootInstance.props || {});
+    endComponentInstance();
+
     container.innerHTML = "";
-
     if (vnode instanceof Node || vnode instanceof DocumentFragment) {
       container.appendChild(vnode);
     }
 
-    currentRoot = null;
-
-    runEffects();
+    // Ejecutamos efectos (useEffect) de todo el árbol
+    runEffectsForInstance(rootInstance);
   }
 
-  root.render = render;
+  rootInstance.render = render;
 
-  // primer render
+  // Primer render
   render();
 
-  // función para rerenderizar este root
+  // Devolvemos una función para forzar rerender de este root
   return function rerender(newProps) {
     if (newProps) {
-      root.props = { ...root.props, ...newProps };
+      rootInstance.props = { ...rootInstance.props, ...newProps };
     }
     render();
   };

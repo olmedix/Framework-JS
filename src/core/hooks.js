@@ -1,37 +1,111 @@
-import { getCurrentRoot } from "./renderer.js";
+// Instancia de componente actualmente en ejecución
+let currentInstance = null;
+const instanceStack = [];
 
+// La usa h() y el renderer
+export function beginComponentInstance(instance) {
+  instanceStack.push(currentInstance);
+  currentInstance = instance;
+  // reiniciar contadores de hooks/efectos/hijos para ESTE componente
+  instance.hookIndex = 0;
+  instance.effectIndex = 0;
+  instance.childIndex = 0;
+}
+
+export function endComponentInstance() {
+  currentInstance = instanceStack.pop() || null;
+}
+
+export function getCurrentInstance() {
+  return currentInstance;
+}
+
+// Crear una nueva instancia de componente
+export function createComponentInstance(type, root) {
+  return {
+    type,                // la función del componente (Home, AdminUser, etc.)
+    hooks: [],           // useState, etc.
+    effects: [],         // useEffect
+    childInstances: [],  // componentes hijos
+    hookIndex: 0,
+    effectIndex: 0,
+    childIndex: 0,
+    root,                // referencia al root al que pertenece (para rerender)
+    props: null,
+  };
+}
+
+// Ejecutar efectos (useEffect) de un componente y todos sus hijos
+export function runEffectsForInstance(instance) {
+  if (!instance) return;
+
+  const effects = instance.effects || [];
+  for (const effect of effects) {
+    if (!effect || !effect.shouldRun) continue;
+
+    // cleanup anterior
+    if (typeof effect.cleanup === "function") {
+      effect.cleanup();
+    }
+
+    const cleanup = effect.callback();
+    effect.cleanup = typeof cleanup === "function" ? cleanup : undefined;
+    effect.shouldRun = false;
+  }
+
+  // Recursivo sobre hijos
+  const children = instance.childInstances || [];
+  for (const child of children) {
+    runEffectsForInstance(child);
+  }
+}
+
+// =========================
+//      useState
+// =========================
 export function useState(initialValue) {
-  const root = getCurrentRoot();
-  if (!root) {
+  const instance = getCurrentInstance();
+  if (!instance) {
     throw new Error("useState debe llamarse dentro de un componente renderizado");
   }
 
-  const index = root.hookIndex++;
+  const index = instance.hookIndex++;
 
-  if (root.hooks[index] === undefined) {
-    root.hooks[index] = initialValue;
+  if (instance.hooks[index] === undefined) {
+    instance.hooks[index] = initialValue;
   }
 
   const setState = (newValue) => {
     const value =
-      typeof newValue === "function" ? newValue(root.hooks[index]) : newValue;
-    root.hooks[index] = value;
-    root.render(); // solo rerenderiza este root
+      typeof newValue === "function"
+        ? newValue(instance.hooks[index])
+        : newValue;
+
+    instance.hooks[index] = value;
+
+    // Rerenderizar el root al que pertenece este componente
+    if (instance.root && typeof instance.root.render === "function") {
+      instance.root.render();
+    }
   };
 
-  return [root.hooks[index], setState];
+  return [instance.hooks[index], setState];
 }
 
+// =========================
+//      useEffect
+// =========================
 export function useEffect(callback, deps) {
-  const root = getCurrentRoot();
-  if (!root) {
+  const instance = getCurrentInstance();
+  if (!instance) {
     throw new Error("useEffect debe llamarse dentro de un componente renderizado");
   }
 
-  const index = root.effectIndex++;
-  if (!root.effects[index]) {
-    // primera vez que se registra este efecto y lo prepara para ejecutarlo
-    root.effects[index] = {
+  const index = instance.effectIndex++;
+
+  if (!instance.effects[index]) {
+    // primera vez
+    instance.effects[index] = {
       callback,
       deps,
       cleanup: null,
@@ -40,12 +114,9 @@ export function useEffect(callback, deps) {
     return;
   }
 
-  const effect = root.effects[index];
+  const effect = instance.effects[index];
 
-  // si no hay deps, siempre se ejecuta
-  /* useEffect(() => {
-      console.log("me ejecuto siempre");
-     }); */
+  // sin deps: siempre se ejecuta
   if (!deps) {
     effect.callback = callback;
     effect.deps = undefined;
@@ -53,7 +124,7 @@ export function useEffect(callback, deps) {
     return;
   }
 
-  // si hay deps, comprobamos si han cambiado
+  // con deps: comprobar cambios
   const prevDeps = effect.deps;
   let changed = !prevDeps || prevDeps.length !== deps.length;
 
@@ -65,7 +136,7 @@ export function useEffect(callback, deps) {
       }
     }
   }
-  // Marcamos si debe volver a ejecutarse.
+
   effect.callback = callback;
   effect.deps = deps;
   effect.shouldRun = changed;
