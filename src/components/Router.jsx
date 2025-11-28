@@ -30,15 +30,18 @@ export function Router({ children }) {
 
   const routeToRender = matchedRoute || fallbackRoute;
 
+  // Por si olvidamos la ruta por defecto
   if (!routeToRender) {
     return null;
   }
 
+  // Ej: <Route path="/" component={Home} />
   if (routeToRender.component) {
     const Comp = routeToRender.component;
     return <Comp />;
   }
 
+  //Ej: <Route path="/" element={<Home />} />
   if (routeToRender.element) {
     return routeToRender.element;
   }
