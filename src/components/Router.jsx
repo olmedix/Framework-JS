@@ -14,6 +14,7 @@ export function Router({ children }) {
   const routes = consumeRegisteredRoutes();
 
   let matchedRoute = null;
+  let matchedParams = null;
   let fallbackRoute = null;
 
   for (const route of routes) {
@@ -22,9 +23,14 @@ export function Router({ children }) {
       continue;
     }
 
-    if (route.path && matchPath(route.path, currentPath)) {
-      matchedRoute = route;
-      break;
+    if (route.path) {
+      const {match,parms} = matchPath(route.path, currentPath);
+
+      if(match){
+        matchedRoute = route;
+        matchedParams = params || {};
+        break;
+      }
     }
   }
 
