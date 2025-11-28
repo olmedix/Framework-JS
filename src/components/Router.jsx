@@ -17,6 +17,8 @@ export function Router({ children }) {
   let matchedParams = null;
   let fallbackRoute = null;
 
+  let params = {};
+
   for (const route of routes) {
     if (route.fallback) {
       fallbackRoute = route;
