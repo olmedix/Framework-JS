@@ -20,7 +20,7 @@ export function AdminUser() {
         if(!res.ok) throw new Error("Error al cargar los usuarios");
 
         const data = await res.json();
-        console.log("data: " + JSON.stringify(data.data));
+        //console.log("data: " + JSON.stringify(data.data));
 
         if (!aborted) setUsers(data.data.users);
         
