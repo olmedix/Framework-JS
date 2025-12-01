@@ -5,11 +5,9 @@ export function Home() {
   const [count,setCount] = useState(0);
 
   return (
-    <section className="page page-home">
+    <section className="maxWidth m-auto">
       <h2>Home</h2>
-      <p>Bienvenido a mi framework con JSX + Vite.</p>
-
-      <h1>Mi framework — Clicks: {count}</h1>
+      <p>Bienvenido a mi framework con JSX + Vite. — Clicks: {count}</p>
 
       <button onClick={() => setCount(count + 1)}>
         +1

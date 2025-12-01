@@ -1,5 +1,9 @@
+import "./styles/bootstrap.scss";                 
+import "bootstrap/dist/js/bootstrap.bundle.min.js"; 
+
+
 import { createRoot } from "./core/renderer.js";
-import { initRouter, getCurrentRoute } from "./core/router.js";
+import { initRouter } from "./core/router.js";
 
 import { Header } from "./components/Header.jsx";
 import { Footer } from "./components/Footer.jsx";
@@ -10,7 +14,7 @@ const headerContainer = document.getElementById("header");
 const bodyContainer = document.getElementById("body");
 const footerContainer = document.getElementById("footer");
 
-createRoot(() => <Header title="Mi framework JS" />, headerContainer);
+createRoot(() => <Header />, headerContainer);
 createRoot(() => <Footer />, footerContainer);
 
 const rerenderBody = createRoot(() => <Body />, bodyContainer);

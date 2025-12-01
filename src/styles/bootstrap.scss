@@ -1,0 +1,20 @@
+// src/styles/bootstrap.scss
+
+// 1. Primero las funciones y variables de Bootstrap
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+// 2. Tus colores
+$gris: #d2d5d8;
+$rosa: #ec29a1;
+
+// 3. Añadir tu color al mapa del tema
+$custom-theme-colors: (
+  "gris": $gris,
+  "rosa": $rosa
+);
+
+$theme-colors: map-merge($theme-colors, $custom-theme-colors);
+
+// 4. Y ahora sí, todo Bootstrap
+@import "bootstrap/scss/bootstrap";

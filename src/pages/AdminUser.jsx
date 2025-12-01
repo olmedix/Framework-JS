@@ -41,7 +41,7 @@ export function AdminUser() {
 
 
   return (
-    <section className="">
+    <section className="maxWidth m-auto">
       <h2>Admin de usuarios</h2>
       <p>Aquí listarías usuarios, CRUD, etc.</p>
 

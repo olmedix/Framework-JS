@@ -1,7 +1,7 @@
-export function Login() {
+export function Register() {
   return (
     <section className="maxWidth m-auto">
-      <h2 className="text-rosa mt-5 fs-1">Login</h2>
+      <h2 className="text-rosa mt-5 fs-1">Register</h2>
 
       <form
         class="mt-5 p-3 fs-4 bg-gris rounded shadow"
