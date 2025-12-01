@@ -61,7 +61,8 @@ export function h(type, props, ...children) {
     // Guardamos el DOM raíz de este componente
     instance.dom = vnode;
 
-    // Definimos cómo se rerenderiza SOLO este componente
+    // Esta es la función que permite que cada componente tenga 
+    // su propio método render.
     instance.render = function () {
       beginComponentInstance(instance);
       const newVnode = instance.type(instance.props);
