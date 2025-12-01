@@ -32,6 +32,9 @@ export function createComponentInstance(type, root) {
     childIndex: 0,
     root,                // referencia al root al que pertenece (para rerender)
     props: null,
+    dom: null,            // nodo DOM raíz de ESTE componente ( el padre )
+    parent: null,         // instancia padare
+    render: null,         // función para renderizar solo este componente
   };
 }
 
@@ -83,8 +86,12 @@ export function useState(initialValue) {
 
     instance.hooks[index] = value;
 
-    // Rerenderizar el root al que pertenece este componente
-    if (instance.root && typeof instance.root.render === "function") {
+    
+    // Rerenderizar SOLO esta instancia
+    if(typeof instance.render === "function"){
+      instance.render();
+    }else if (instance.root && typeof instance.root.render === "function") {
+      // Si no tiene algo no tiene render , renderizamos desde el root.
       instance.root.render();
     }
   };

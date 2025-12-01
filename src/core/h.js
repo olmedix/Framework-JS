@@ -3,6 +3,7 @@ import {
   beginComponentInstance,
   endComponentInstance,
   createComponentInstance,
+  runEffectsForInstance,
 } from "./hooks.js";
 
 export function h(type, props, ...children) {
@@ -28,7 +29,7 @@ export function h(type, props, ...children) {
 
     if (parent) {
       // El root de este componente es el mismo que el del padre
-      root = parent.root;
+      root = parent.root || parent;
 
       // Posición de este hijo dentro del padre
       const childIndex = parent.childIndex || 0;
@@ -41,6 +42,7 @@ export function h(type, props, ...children) {
         instance = existing;
       } else {
         instance = createComponentInstance(type, root);
+        instance.parent = parent;
         parent.childInstances[childIndex] = instance;
       }
     } else {
@@ -48,11 +50,31 @@ export function h(type, props, ...children) {
       instance = createComponentInstance(type, root);
     }
 
+    // Actualizamos las props de la instancia
     instance.props = { ...props, children: flatChildren };
 
+    // Ejecutamos el componente para obtener su nodo raíz
     beginComponentInstance(instance);
     const vnode = type(instance.props);
     endComponentInstance();
+
+    // Guardamos el DOM raíz de este componente
+    instance.dom = vnode;
+
+    // Definimos cómo se rerenderiza SOLO este componente
+    instance.render = function () {
+      beginComponentInstance(instance);
+      const newVnode = instance.type(instance.props);
+      endComponentInstance();
+
+      const oldDom = instance.dom;
+      if (oldDom && oldDom.parentNode) {
+        oldDom.parentNode.replaceChild(newVnode, oldDom);
+      }
+      instance.dom = newVnode;
+
+      runEffectsForInstance(instance);
+    };
 
     return vnode;
   }

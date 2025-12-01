@@ -12,13 +12,15 @@ export function createRoot(Component, container, initialProps = {}) {
   rootInstance.props = initialProps;
   rootInstance.container = container;
 
-  function render() {
-    rootInstance.render = render; // para que los hooks puedan llamarlo
+  function renderRoot() {
+    rootInstance.render = renderRoot; // para que los hooks puedan llamarlo
 
     // Ejecutamos el componente raíz como instancia
     beginComponentInstance(rootInstance);
     const vnode = rootInstance.type(rootInstance.props || {});
     endComponentInstance();
+
+    rootInstance.dom = vnode;
 
     container.innerHTML = "";
     if (vnode instanceof Node || vnode instanceof DocumentFragment) {
@@ -29,16 +31,16 @@ export function createRoot(Component, container, initialProps = {}) {
     runEffectsForInstance(rootInstance);
   }
 
-  rootInstance.render = render;
+  rootInstance.renderRoot = renderRoot;
 
   // Primer render
-  render();
+  renderRoot();
 
   // Devolvemos una función para forzar rerender de este root
   return function rerender(newProps) {
     if (newProps) {
       rootInstance.props = { ...rootInstance.props, ...newProps };
     }
-    render();
+    renderRoot();
   };
 }
