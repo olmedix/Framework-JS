@@ -1,3 +1,5 @@
+import {h,Fragment} from "./h.js"
+
 // Instancia de componente actualmente en ejecución
 let currentInstance = null;
 const instanceStack = [];
@@ -170,7 +172,10 @@ export function createContext(defaultValue) {
       }
       instance.contexts.set(context, value);
 
-      return children;
+      const normalizedChildren = Array.isArray(children) ? children : [children];
+
+      // Devuelve los children renderizados
+      return h(Fragment, null, ...normalizedChildren);
     },
   };
   return context;
