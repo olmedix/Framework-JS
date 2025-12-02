@@ -16,8 +16,8 @@ export function Header() {
     <header className="bg-dark">
       <h1 class="p-3 text-light text-center">Mi framework JS</h1>
 
-      <nav class="navbar navbar-expand-sm navbar-dark maxWidth m-auto">
-        <div class="container-fluid">
+      <nav className="navbar navbar-expand-sm navbar-dark maxWidth m-auto">
+        <div className="container-fluid">
           <a class="navbar-brand" onClick={() => navigate("/")}>
             {url}
           </a>
@@ -34,13 +34,13 @@ export function Header() {
             <span class="navbar-toggler-icon"></span>
           </button>
 
-          <div class="collapse navbar-collapse" id="navbarNav">
+          <div className="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto ">
               {routes.map((route) => {
                 const [label, path] = Object.entries(route)[0];
         
                 return (
-                  <li class="nav-item">
+                  <li className="nav-item">
                     <a className={`nav-link ${label === url ? "selected" : ""}`} onClick={() => {setUrl(label); navigate(path)}}>
                       {label}
                     </a>
