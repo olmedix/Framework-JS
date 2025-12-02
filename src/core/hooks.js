@@ -23,18 +23,18 @@ export function getCurrentInstance() {
 // Crear una nueva instancia de componente
 export function createComponentInstance(type, root) {
   return {
-    type,                // la función del componente (Home, AdminUser, etc.)
-    hooks: [],           // useState, etc.
-    effects: [],         // useEffect
-    childInstances: [],  // componentes hijos
+    type, // la función del componente (Home, AdminUser, etc.)
+    hooks: [], // useState, etc.
+    effects: [], // useEffect
+    childInstances: [], // componentes hijos
     hookIndex: 0,
     effectIndex: 0,
     childIndex: 0,
-    root,                // referencia al root al que pertenece (para rerender)
+    root, // referencia al root al que pertenece (para rerender)
     props: null,
-    dom: null,            // nodo DOM raíz de ESTE componente ( el padre )
-    parent: null,         // instancia padare
-    render: null,         // función para renderizar solo este componente
+    dom: null, // nodo DOM raíz de ESTE componente ( el padre )
+    parent: null, // instancia padare
+    render: null, // función para renderizar solo este componente
   };
 }
 
@@ -69,7 +69,9 @@ export function runEffectsForInstance(instance) {
 export function useState(initialValue) {
   const instance = getCurrentInstance();
   if (!instance) {
-    throw new Error("useState debe llamarse dentro de un componente renderizado");
+    throw new Error(
+      "useState debe llamarse dentro de un componente renderizado"
+    );
   }
 
   const index = instance.hookIndex++;
@@ -86,11 +88,10 @@ export function useState(initialValue) {
 
     instance.hooks[index] = value;
 
-    
     // Rerenderizar SOLO esta instancia
-    if(typeof instance.render === "function"){
+    if (typeof instance.render === "function") {
       instance.render();
-    }else if (instance.root && typeof instance.root.render === "function") {
+    } else if (instance.root && typeof instance.root.render === "function") {
       // Si no tiene algo no tiene render , renderizamos desde el root.
       instance.root.render();
     }
@@ -105,7 +106,9 @@ export function useState(initialValue) {
 export function useEffect(callback, deps) {
   const instance = getCurrentInstance();
   if (!instance) {
-    throw new Error("useEffect debe llamarse dentro de un componente renderizado");
+    throw new Error(
+      "useEffect debe llamarse dentro de un componente renderizado"
+    );
   }
 
   const index = instance.effectIndex++;
@@ -147,4 +150,40 @@ export function useEffect(callback, deps) {
   effect.callback = callback;
   effect.deps = deps;
   effect.shouldRun = changed;
+}
+
+// =========================
+//      useContext
+// =========================
+export function createContext(defaultValue) {
+  const context = {
+    value: defaultValue,
+    Provider: function Provider({ value, children }) {
+      const instance = getCurrentInstance();
+      if (!instance) {
+        throw new Error("Provider debe usarse dentro de un componente");
+      }
+
+      // Guardamos el contexto en esta instancia
+      if (!instance.contexts) {
+        instance.contexts = new Map();
+      }
+      instance.contexts.set(context, value);
+
+      return children;
+    },
+  };
+  return context;
+}
+
+export function useContext(context) {
+  let instance = getCurrentInstance();
+
+  while (instance) {
+    if (instance.contexts && instance.contexts.has(context)) {
+      return instance.contexts.get(context);
+    }
+    instance = instance.parent;
+  }
+  return context.value;
 }

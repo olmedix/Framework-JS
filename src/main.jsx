@@ -4,6 +4,9 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 import { createRoot } from "./core/renderer.js";
 import { initRouter } from "./core/router.js";
+import {Fragment } from "./core/h.js";
+
+import { AuthProvider } from "./contexts/AuthContext.jsx";
 
 import { Header } from "./components/Header.jsx";
 import { Footer } from "./components/Footer.jsx";

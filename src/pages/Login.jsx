@@ -1,60 +1,39 @@
-import { useState, useEffect } from "../core/hooks.js";
+import { useState} from "../core/hooks.js";
 
 export function Login() {
   const [user, setUser] = useState({});
-  const [loginData, setLoginData] = useState({});
+  const [isSubmit,setIsSubmit] = useState(false);
   const [error, setError] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-
-  const handleLoginSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let aborted = false;
-    setIsSubmitting(true);
-    setError(null);
+    setIsSubmit(true);
 
     try {
-            const data = await login(loginData);
-            localStorage.setItem("authToken", data.access_token);
-            setHasToken(true);
-            window.location.href = "home";
-            
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+    
+      setUser(data.data.user);
+      localStorage.setItem("authToken", data.data.token);
     } catch (error) {
-        setError(error.message);
+      setError(error.message);
+    }finally{
+      setIsSubmit(false);
     }
   };
 
-  useEffect(() => {
-    let aborted = false;
-
-    async function loginUser() {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const res = await fetch("/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newUser),
-        });
-
-        if (!res.ok) throw new Error("Error al hacer login el usuario");
-
-        const data = await res.json();
-
-
-        if (!aborted) setUsers(data.data.users);
-      } catch (err) {
-        if (!aborted) setError(err.message || "Error en useEffect AdminUser");
-      } finally {
-        if (!aborted) setLoading(false);
-      }
-    }
-    loginUser();
-
-    return () => (aborted = true);
-  }, []);
-
-  if (loading) return <p>Cargando usuario ...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -62,8 +41,8 @@ export function Login() {
       <h2 className="text-rosa mt-5 fs-1">Login</h2>
 
       <form
-        class="mt-5 p-3 fs-4 bg-gris rounded shadow"
-        onSubmit={handleLoginSubmit}
+        className="mt-5 p-3 fs-4 bg-gris rounded shadow"
+        onSubmit={handleSubmit}
       >
         <div class="form-group mt-2">
           <label className="fw-bold" for="email">
@@ -73,8 +52,10 @@ export function Login() {
             type="email"
             class="form-control"
             id="email"
+            value={email}
             aria-describedby="emailHelp"
             placeholder="Introduce email"
+            onChange={(e) => setEmail(e.target.value)}
           ></input>
           <small id="emailHelp" class="form-text text-muted fs-6">
             Nunca compartiremos su email con nadie.
@@ -88,12 +69,18 @@ export function Login() {
             type="password"
             class="form-control"
             id="password"
+            value={password}
             placeholder="Contraseña"
+            onChange={(e) => setPassword(e.target.value)}
           ></input>
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3 fs-4">
-          Submit
+        <button
+          type="submit" 
+          class="btn btn-primary mt-3 fs-4"
+        >
+          {isSubmit ? "Enviando..." : "Submit"}
+
         </button>
       </form>
     </section>
