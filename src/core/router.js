@@ -97,3 +97,6 @@ export function matchPath(pathPattern, currentPath) {
   return { match: true, params };
 }
 
+export function getRegisteredRoutes() {
+  return _routeRegistry;
+}

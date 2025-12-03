@@ -1,23 +1,15 @@
 import {
   getCurrentRoute,
-  consumeRegisteredRoutes,
   matchPath,
+  getRegisteredRoutes,
 } from "../core/router.js";
 
-export function Router({ children }) {
-
-  void children; 
-
+export function Router() {
   const currentPath = getCurrentRoute();
-
-  // Recuperamos las rutas registradas en este render
-  const routes = consumeRegisteredRoutes();
+  const routes = getRegisteredRoutes(); // ✅ NO CONSUMIR
 
   let matchedRoute = null;
-  let matchedParams = null;
   let fallbackRoute = null;
-
-  let params = {};
 
   for (const route of routes) {
     if (route.fallback) {
@@ -26,33 +18,16 @@ export function Router({ children }) {
     }
 
     if (route.path) {
-      const {match,parms} = matchPath(route.path, currentPath);
-
-      if(match){
+      const { match } = matchPath(route.path, currentPath);
+      if (match) {
         matchedRoute = route;
-        matchedParams = params || {};
         break;
       }
     }
   }
 
   const routeToRender = matchedRoute || fallbackRoute;
+  if (!routeToRender) return null;
 
-  // Por si olvidamos la ruta por defecto
-  if (!routeToRender) {
-    return null;
-  }
-
-  // Ej: <Route path="/" component={Home} />
-  if (routeToRender.component) {
-    const Comp = routeToRender.component;
-    return <Comp />;
-  }
-
-  //Ej: <Route path="/" element={<Home />} />
-  if (routeToRender.element) {
-    return routeToRender.element;
-  }
-
-  return null;
+  return h(routeToRender.component, {});
 }

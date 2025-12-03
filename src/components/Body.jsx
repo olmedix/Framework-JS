@@ -15,7 +15,7 @@ export function Body() {
       <Route path="/" component={Home} />
       <Route path="/projects" component={Projects} />
       <Route path="/login" component={Login} />
-      <Route path="/login" component={Register} />
+      <Route path="/register" component={Register} />
       <Route path="/admin/users" component={AdminUser} />
       <Route fallback component={NotFound} />
     </Router>

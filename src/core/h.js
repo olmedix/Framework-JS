@@ -55,13 +55,28 @@ export function h(type, props, ...children) {
 
     // Ejecutamos el componente para obtener su nodo raíz
     beginComponentInstance(instance);
+
+    // ✅ CONTEXT PROVIDER — FIX DEFINITIVO REAL
+if (type._context) {
+  // 1️⃣ Inyectar contexto en ESTA instancia
+  if (!instance.contexts) instance.contexts = {};
+  instance.contexts[type._context.id] = instance.props.value;
+
+  // 2️⃣ Ejecutar el componente Provider (que SOLO devuelve children)
+  const vnode = type(instance.props);
+
+  endComponentInstance();
+  return vnode;
+}
+
+
     const vnode = type(instance.props);
     endComponentInstance();
 
     // Guardamos el DOM raíz de este componente
     instance.dom = vnode;
 
-    // Esta es la función que permite que cada componente tenga 
+    // Esta es la función que permite que cada componente tenga
     // su propio método render.
     instance.render = function () {
       beginComponentInstance(instance);
@@ -116,6 +131,7 @@ export function Fragment({ children }) {
     else if (child instanceof Node) fragment.appendChild(child);
     else fragment.appendChild(document.createTextNode(String(child)));
   }
+
   append(children);
   return fragment;
 }

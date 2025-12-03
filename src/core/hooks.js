@@ -159,27 +159,33 @@ export function useEffect(callback, deps) {
 // =========================
 export function createContext(defaultValue) {
   const context = {
-    value: defaultValue,
-    Provider: function Provider({ value, children }) {
-      const instance = getCurrentInstance();
-      if (!instance) {
-        throw new Error("Provider debe usarse dentro de un componente");
-      }
-
-      // Guardamos el contexto en esta instancia
-      if (!instance.contexts) {
-        instance.contexts = new Map();
-      }
-      instance.contexts.set(context, value);
-
-      const normalizedChildren = Array.isArray(children) ? children : [children];
-
-      // Devuelve los children renderizados
-      return h(Fragment, null, ...normalizedChildren);
-    },
+    _value: defaultValue,
   };
+
+  context.Provider = function Provider({ value, children }) {
+    const instance = getCurrentInstance();
+    if (!instance) {
+      throw new Error("Provider debe usarse dentro de un componente");
+    }
+
+    // ✅ Guardamos el valor globalmente
+    context._value = value;
+
+    if (!instance.contexts) {
+      instance.contexts = new Map();
+    }
+    instance.contexts.set(context, value);
+
+    const normalizedChildren = Array.isArray(children)
+      ? children
+      : [children];
+
+    return h(Fragment, null, ...normalizedChildren);
+  };
+
   return context;
 }
+
 
 export function useContext(context) {
   let instance = getCurrentInstance();
@@ -190,5 +196,10 @@ export function useContext(context) {
     }
     instance = instance.parent;
   }
-  return context.value;
+
+  // ✅ fallback GLOBAL
+  return context._value;
 }
+
+
+

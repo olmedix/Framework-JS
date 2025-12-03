@@ -1,7 +1,10 @@
-import { useState} from "../core/hooks.js";
+import { useState, useContext,getCurrentInstance} from "../core/hooks.js";
+import { AuthContext } from "../contexts/AuthContext.jsx";
+import { navigate } from "../core/router.js";
 
 export function Login() {
-  const [user, setUser] = useState({});
+  const { user, setUser } = useContext(AuthContext);
+
   const [isSubmit,setIsSubmit] = useState(false);
   const [error, setError] = useState(null);
   const [email, setEmail] = useState("");
@@ -27,6 +30,7 @@ export function Login() {
     
       setUser(data.data.user);
       localStorage.setItem("authToken", data.data.token);
+      navigate("/");
     } catch (error) {
       setError(error.message);
     }finally{
@@ -39,35 +43,37 @@ export function Login() {
   return (
     <section className="maxWidth m-auto">
       <h2 className="text-rosa mt-5 fs-1">Login</h2>
+      <h2 className="text-rosa mt-5 fs-1">{user ? `Welcome, ${user.name}` : "Please log in"}</h2>
+      
 
       <form
         className="mt-5 p-3 fs-4 bg-gris rounded shadow"
         onSubmit={handleSubmit}
       >
-        <div class="form-group mt-2">
-          <label className="fw-bold" for="email">
+        <div className="form-group mt-2">
+          <label className="fw-bold" htmlFor="email">
             Dirección email
           </label>
           <input
             type="email"
-            class="form-control"
+            className="form-control"
             id="email"
             value={email}
             aria-describedby="emailHelp"
             placeholder="Introduce email"
             onChange={(e) => setEmail(e.target.value)}
           ></input>
-          <small id="emailHelp" class="form-text text-muted fs-6">
+          <small id="emailHelp" className="form-text text-muted fs-6">
             Nunca compartiremos su email con nadie.
           </small>
         </div>
-        <div class="form-group mt-2">
-          <label className="fw-bold" for="password">
+        <div className="form-group mt-2">
+          <label className="fw-bold" htmlFor="password">
             Contraseña
           </label>
           <input
             type="password"
-            class="form-control"
+            className="form-control"
             id="password"
             value={password}
             placeholder="Contraseña"
@@ -77,7 +83,7 @@ export function Login() {
 
         <button
           type="submit" 
-          class="btn btn-primary mt-3 fs-4"
+          className="btn btn-primary mt-3 fs-4"
         >
           {isSubmit ? "Enviando..." : "Submit"}
 

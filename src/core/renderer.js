@@ -17,8 +17,26 @@ export function createRoot(Component, container, initialProps = {}) {
 
     // Ejecutamos el componente raíz como instancia
     beginComponentInstance(rootInstance);
-    const vnode = rootInstance.type(rootInstance.props || {});
+    let vnode = rootInstance.type(rootInstance.props || {});
     endComponentInstance();
+
+    /**
+     * ===============================================================
+     *  ⭐⭐⭐ PUNTO 2: DETECTAR CONTEXT PROVIDER Y ACTUALIZAR VALOR ⭐⭐⭐
+     * ===============================================================
+     */
+    if (vnode?.type?.isContextProvider && vnode.type._context) {
+      const ctx = vnode.type._context;
+
+      // 1. Actualizar valor del contexto
+      ctx.value = vnode.props.value;
+
+      // 2. Guardar la instancia actual del provider
+      ctx.ProviderInstance = vnode;
+
+      // 3. Renderizar solo los children
+      vnode = vnode.props.children;
+    }
 
     rootInstance.dom = vnode;
 
