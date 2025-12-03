@@ -2,7 +2,8 @@ import {
   getCurrentRoute,
   matchPath,
   getRegisteredRoutes,
-} from "../core/router.js";
+} from "./router.js";
+
 
 export function Router() {
   const currentPath = getCurrentRoute();

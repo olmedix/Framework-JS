@@ -1,6 +1,6 @@
 // src/Body.jsx
-import { Router } from "./Router.jsx";
-import { Route } from "./Route.jsx";
+import { Router } from "../core/Router.jsx";
+import { Route } from "../core/Route.jsx";
 
 import { Home } from "../pages/Home.jsx";
 import { Projects } from "../pages/Projects.jsx";

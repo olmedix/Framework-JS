@@ -1,4 +1,4 @@
-import { registerRoute } from "../core/router.js";
+import { registerRoute } from "./router.js";
 
 export function Route(props) {
   registerRoute(props);
