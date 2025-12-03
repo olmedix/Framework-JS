@@ -63,6 +63,20 @@ export function Header() {
                 );
               })}
 
+              {user && (
+                <li className="nav-item">
+                  <a
+                      className={"nav-link fw-bold text-info"}
+                      onClick={() => {
+                        setUrl("Profile");
+                        navigate("/profile");
+                      }}
+                    >
+                      {user.name}
+                    </a>
+                </li>
+              )}
+
             </ul>
           </div>
         </div>

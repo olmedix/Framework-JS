@@ -7,6 +7,7 @@ import { Projects } from "../pages/Projects.jsx";
 import { Login } from "../pages/Login.jsx";
 import { Logout } from "../pages/Logout.jsx";
 import { Register } from "../pages/Register.jsx";
+import { Profile } from "../pages/Profile.jsx";
 import { AdminUser } from "../pages/AdminUser.jsx";
 import { NotFound } from "../pages/NotFound.jsx";
 
@@ -23,6 +24,7 @@ export function Body() {
       <Route path="/logout" component={Logout} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/profile" component={Profile} />
       <Route path="/admin/users" component={AdminUser} />
       <Route fallback component={NotFound} />
     </Router>
