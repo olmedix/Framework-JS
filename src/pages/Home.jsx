@@ -6,8 +6,6 @@ export function Home() {
   const [count,setCount] = useState(0);
    const { user} = useContext(AuthContext);
 
-   console.log("User in Home:", user);  
-
   return (
     <section className="maxWidth m-auto">
       <h2>Home</h2>
