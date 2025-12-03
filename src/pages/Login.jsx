@@ -1,4 +1,4 @@
-import { useState, useContext,getCurrentInstance} from "../core/hooks.js";
+import { useState, useContext} from "../core/hooks.js";
 import { AuthContext } from "../contexts/AuthContext.jsx";
 import { navigate } from "../core/router.js";
 
@@ -43,9 +43,7 @@ export function Login() {
   return (
     <section className="maxWidth m-auto">
       <h2 className="text-rosa mt-5 fs-1">Login</h2>
-      <h2 className="text-rosa mt-5 fs-1">{user ? `Welcome, ${user.name}` : "Please log in"}</h2>
       
-
       <form
         className="mt-5 p-3 fs-4 bg-gris rounded shadow"
         onSubmit={handleSubmit}
