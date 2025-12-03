@@ -1,39 +1,45 @@
-import { useState, useContext} from "../core/hooks.js";
+import { useState, useContext } from "../core/hooks.js";
 import { AuthContext } from "../contexts/AuthContext.jsx";
 import { navigate } from "../core/router.js";
 
 export function Register() {
   const { user, setUser } = useContext(AuthContext);
 
-  const [isSubmit,setIsSubmit] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(false);
   const [error, setError] = useState(null);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState({});
+  const [errorEmail, setErrorEmail] = useState("");
+  const [userData, setUserData] = useState({
+    name: "",
+    surname: "",
+    email: "",
+    password: "",
+    role: "User",
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmit(true);
 
     try {
-      const res = await fetch("/api/register", {
+      const res = await fetch("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        body: JSON.stringify(userData),
       });
-
       const data = await res.json();
-    
+
+      if (res.status === 400) return setErrorMessage(data.error);
+      if (res.status === 409) return setErrorEmail(data.error);
+      console.log("data: " + JSON.stringify(data));
       setUser(data.data.user);
       localStorage.setItem("authToken", data.data.token);
       navigate("/");
     } catch (error) {
       setError(error.message);
-    }finally{
+    } finally {
       setIsSubmit(false);
     }
   };
@@ -42,12 +48,49 @@ export function Register() {
 
   return (
     <section className="maxWidth m-auto">
-      <h2 className="text-rosa mt-5 fs-1">Login</h2>
-      
+      <h2 className="text-rosa mt-5 fs-1">Register</h2>
+
+      {errorMessage.name && <p className="text-danger">{errorMessage.name}</p>}
+      {errorMessage.surname && (<p className="text-danger">{errorMessage.surname}</p>)}
+      {errorMessage.password && (<p className="text-danger">{errorMessage.password}</p>)}
+      {errorEmail && <p className="text-danger">{errorEmail}</p>}
+
       <form
         className="mt-5 p-3 fs-4 bg-gris rounded shadow"
         onSubmit={handleSubmit}
       >
+        <div className="form-group mt-2">
+          <label className="fw-bold" htmlFor="name">
+            Nombre
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="name"
+            value={userData.name}
+            aria-describedby="nameHelp"
+            placeholder="Introduce name"
+            onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+          ></input>
+        </div>
+
+        <div className="form-group mt-2">
+          <label className="fw-bold" htmlFor="surname">
+            Apellidos
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="surname"
+            value={userData.surname}
+            aria-describedby="surnameHelp"
+            placeholder="Introduce surname"
+            onChange={(e) =>
+              setUserData({ ...userData, surname: e.target.value })
+            }
+          ></input>
+        </div>
+
         <div className="form-group mt-2">
           <label className="fw-bold" htmlFor="email">
             Dirección email
@@ -56,15 +99,18 @@ export function Register() {
             type="email"
             className="form-control"
             id="email"
-            value={email}
+            value={userData.email}
             aria-describedby="emailHelp"
             placeholder="Introduce email"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) =>
+              setUserData({ ...userData, email: e.target.value })
+            }
           ></input>
           <small id="emailHelp" className="form-text text-muted fs-6">
             Nunca compartiremos su email con nadie.
           </small>
         </div>
+
         <div className="form-group mt-2">
           <label className="fw-bold" htmlFor="password">
             Contraseña
@@ -73,18 +119,16 @@ export function Register() {
             type="password"
             className="form-control"
             id="password"
-            value={password}
+            value={userData.password}
             placeholder="Contraseña"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) =>
+              setUserData({ ...userData, password: e.target.value })
+            }
           ></input>
         </div>
 
-        <button
-          type="submit" 
-          className="btn btn-primary mt-3 fs-4"
-        >
+        <button type="submit" className="btn btn-primary mt-3 fs-4">
           {isSubmit ? "Enviando..." : "Submit"}
-
         </button>
       </form>
     </section>
