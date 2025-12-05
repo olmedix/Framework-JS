@@ -21,7 +21,7 @@ export function h(type, props, ...children) {
   }
   flatten(children);
 
-  // Componente de función: Header, Home, AdminUser, etc.
+  // Componente de función: Header, Home, AdminHome, etc.
   if (typeof type === "function") {
     const parent = getCurrentInstance();
     let instance;

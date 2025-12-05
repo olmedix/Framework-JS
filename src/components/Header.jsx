@@ -2,15 +2,16 @@ import { navigate } from "../core/router.js";
 import { useState } from "../core/hooks.js";
 import { useContext } from "../core/hooks";
 import { AuthContext } from "../contexts/AuthContext";
+import { AdminHeader } from "./AdminHeader.jsx";
 
 export function Header() {
   const [url, setUrl] = useState("");
-  const { user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const routes = [
     { Home: "/" },
     { Projects: "/projects" },
-    { Admin: "/admin/users" },
+    { Admin: "/admin" },
     { Login: "/login" },
     { Logout: "/logout" },
     { Register: "/register" },
@@ -44,12 +45,20 @@ export function Header() {
                 const [label, path] = Object.entries(route)[0];
 
                 // ocultar "Login" y "Register" cuando el usuario esté logueado; ocultar "Logout" cuando no haya usuario
-                if ((user && (label === "Login" || label === "Register")) || (!user && label === "Logout")) {
+                if (
+                  (user && (label === "Login" || label === "Register")) ||
+                  (!user && label === "Logout")
+                ) {
                   return null;
                 }
 
-                if(user && user?.role.toLowerCase() !== "admin" && label === "Admin") return null;
-                if(!user  && label === "Admin") return null;
+                if (
+                  user &&
+                  user?.role.toLowerCase() !== "admin" &&
+                  label === "Admin"
+                )
+                  return null;
+                if (!user && label === "Admin") return null;
 
                 return (
                   <li key={label} className="nav-item">
@@ -69,21 +78,21 @@ export function Header() {
               {user && (
                 <li className="nav-item">
                   <a
-                      className={"nav-link fw-bold text-info"}
-                      onClick={() => {
-                        setUrl("Profile");
-                        navigate("/profile");
-                      }}
-                    >
-                      {user.name}
-                    </a>
+                    className={"nav-link fw-bold text-info"}
+                    onClick={() => {
+                      setUrl("Profile");
+                      navigate("/profile");
+                    }}
+                  >
+                    {user.name}
+                  </a>
                 </li>
               )}
-
             </ul>
           </div>
         </div>
       </nav>
+      {user && user.role.toLowerCase() === "admin" && <AdminHeader />}
     </header>
   );
 }

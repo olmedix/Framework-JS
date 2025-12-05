@@ -8,7 +8,8 @@ import { Login } from "../pages/Login.jsx";
 import { Logout } from "../pages/Logout.jsx";
 import { Register } from "../pages/Register.jsx";
 import { Profile } from "../pages/Profile.jsx";
-import { AdminUser } from "../pages/AdminUser.jsx";
+import { AdminHome } from "../pages/admin/AdminHome.jsx";
+import { AdminUsers } from "../pages/admin/AdminUsers.jsx";
 import { RequireRole } from "./guards/RequireRole.jsx";
 import { RequireUser } from "./guards/RequireUser.jsx";
 import { NotFound } from "../pages/NotFound.jsx";
@@ -20,7 +21,6 @@ export function Body() {
       <Route path="/projects" component={Projects} />
       <Route path="/login" component={Login} />
       <Route path="/logout" component={Logout} />
-      <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route
         path="/profile"
@@ -31,10 +31,18 @@ export function Body() {
         )}
       />
       <Route
+        path="/admin"
+        component={() => (
+          <RequireRole>
+            <AdminHome />
+          </RequireRole>
+        )}
+      />
+      <Route
         path="/admin/users"
         component={() => (
           <RequireRole>
-            <AdminUser />
+            <AdminUsers />
           </RequireRole>
         )}
       />
