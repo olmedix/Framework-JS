@@ -43,10 +43,13 @@ export function Header() {
               {routes.map((route) => {
                 const [label, path] = Object.entries(route)[0];
 
-                // hide Login/Register when user is logged in; hide Logout when not logged in
+                // ocultar "Login" y "Register" cuando el usuario esté logueado; ocultar "Logout" cuando no haya usuario
                 if ((user && (label === "Login" || label === "Register")) || (!user && label === "Logout")) {
                   return null;
                 }
+
+                if(user && user?.role.toLowerCase() !== "admin" && label === "Admin") return null;
+                if(!user  && label === "Admin") return null;
 
                 return (
                   <li key={label} className="nav-item">
