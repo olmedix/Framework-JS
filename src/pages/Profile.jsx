@@ -22,8 +22,6 @@ export function Profile() {
       });
       const data = await res.json();
 
-      console.log("data: " + JSON.stringify(data.data));
-
       setUser(data.data);
       
     } catch (error) {
@@ -35,7 +33,6 @@ export function Profile() {
   };
 
   if (error) return <p>Error: {error}</p>;
-  console.log(userData);
 
   return (
     <section className="maxWidth m-auto">

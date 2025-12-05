@@ -1,6 +1,5 @@
 import { useState,useEffect } from "../core/hooks.js";
 
-
 export function AdminUser() {
 
   const [users,setUsers] = useState([]);
@@ -20,7 +19,6 @@ export function AdminUser() {
         if(!res.ok) throw new Error("Error al cargar los usuarios");
 
         const data = await res.json();
-        //console.log("data: " + JSON.stringify(data.data));
 
         if (!aborted) setUsers(data.data.users);
         
@@ -43,8 +41,6 @@ export function AdminUser() {
   return (
     <section className="maxWidth m-auto">
       <h2>Admin de usuarios</h2>
-      <p>Aquí listarías usuarios, CRUD, etc.</p>
-
       
       <ul>
         {users.map((u) => (

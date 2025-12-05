@@ -1,5 +1,3 @@
-// src/pages/NotFoundPage.jsx
-
 export function NotFound() {
   return (
     <section className="maxWidth m-auto">

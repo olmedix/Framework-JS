@@ -3,7 +3,7 @@ import { AuthContext } from "../contexts/AuthContext.jsx";
 import { navigate } from "../core/router.js";
 
 export function Login() {
-  const { user, setUser } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
 
   const [isSubmit,setIsSubmit] = useState(false);
   const [error, setError] = useState(null);

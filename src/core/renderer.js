@@ -22,7 +22,7 @@ export function createRoot(Component, container, initialProps = {}) {
 
     /**
      * ===============================================================
-     *  ⭐⭐⭐ PUNTO 2: DETECTAR CONTEXT PROVIDER Y ACTUALIZAR VALOR ⭐⭐⭐
+     * DETECTAR CONTEXT PROVIDER Y ACTUALIZAR VALOR
      * ===============================================================
      */
     if (vnode?.type?.isContextProvider && vnode.type._context) {

@@ -31,7 +31,7 @@ export function Register() {
 
       if (res.status === 400) return setErrorMessage(data.error);
       if (res.status === 409) return setErrorEmail(data.error);
-      console.log("data: " + JSON.stringify(data));
+
       localStorage.setItem("authToken", data.data.token);
       navigate("/login");
     } catch (error) {
