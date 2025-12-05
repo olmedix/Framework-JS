@@ -12,9 +12,6 @@ import { Body } from "./components/Body.jsx";
 
 const appContainer = document.getElementById("rootDiv");
 
-// ---------------------------------------------
-// RootApp stays stable — Provider won't remount
-// ---------------------------------------------
 function RootApp() {
 
   return (
@@ -26,31 +23,9 @@ function RootApp() {
   );
 }
 
-// createRoot should only be called ONCE
 const rerenderApp = createRoot(RootApp, appContainer);
 
-// Router will call this on every navigation
+// Ruter al que llamaremos despues de cada navegación
 initRouter(() => {
   rerenderApp(); 
 });
-
-/*
-const rerenderApp = createRoot( () => (
-<AuthProvider>
-  <Fragment>
-    <Header />
-    <Body />
-    <Footer />
-  </Fragment>
-</AuthProvider>
-
-),appContainer)
-
-console.log("[MAIN] createRoot returned:", typeof rerenderApp);
-
-
-initRouter(() => {
-  console.log("[MAIN] initRouter callback -> calling rerenderApp()");
-  rerenderApp();
-});
-*/
