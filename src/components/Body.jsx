@@ -9,23 +9,35 @@ import { Logout } from "../pages/Logout.jsx";
 import { Register } from "../pages/Register.jsx";
 import { Profile } from "../pages/Profile.jsx";
 import { AdminUser } from "../pages/AdminUser.jsx";
+import { RequireRole } from "./guards/RequireRole.jsx";
+import { RequireUser } from "./guards/RequireUser.jsx";
 import { NotFound } from "../pages/NotFound.jsx";
 
-import { useContext } from "../core/hooks";
-import { AuthContext } from "../contexts/AuthContext";
-
 export function Body() {
-  const { user} = useContext(AuthContext);
   return (
     <Router>
       <Route path="/" component={Home} />
       <Route path="/projects" component={Projects} />
-      <Route path="/login" component={Login} /> 
+      <Route path="/login" component={Login} />
       <Route path="/logout" component={Logout} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/admin/users" component={AdminUser} />
+      <Route
+        path="/profile"
+        component={() => (
+          <RequireUser>
+            <Profile />
+          </RequireUser>
+        )}
+      />
+      <Route
+        path="/admin/users"
+        component={() => (
+          <RequireRole>
+            <AdminUser />
+          </RequireRole>
+        )}
+      />
       <Route fallback component={NotFound} />
     </Router>
   );
