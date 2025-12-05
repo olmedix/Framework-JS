@@ -30,6 +30,7 @@ export function Login() {
     
       setUser(data.data.user);
       localStorage.setItem("authToken", data.data.token);
+      localStorage.setItem("user", JSON.stringify(data.data.user));
       navigate("/");
     } catch (error) {
       setError(error.message);

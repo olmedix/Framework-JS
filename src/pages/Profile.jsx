@@ -91,7 +91,7 @@ export function Profile() {
         </div>
 
         <button type="submit" className="btn btn-primary mt-3 fs-4">
-          {isSubmit ? "Enviando..." : "Submit"}
+          {isSubmit ? "Enviando..." : "Update"}
         </button>
       </form>
     </section>

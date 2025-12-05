@@ -18,6 +18,7 @@ export function Logout() {
         });
         setUser(null);
         localStorage.removeItem("authToken");
+        localStorage.removeItem("user");
         navigate("/login");
       } catch (err) {
         setError(err.message);
