@@ -1,11 +1,20 @@
 import { useState, useEffect } from "../../core/hooks.js";
+import { navigate } from "../../core/router.js";
 
 export function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [filterUsers, setFilterUsers] = useState(users);
-  const [role, setRole] = useState("");
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Variables para la paginación
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limitUsers, setLimitUsers] = useState(10);
+  const [roleFilter, setRoleFilter] = useState("");
+
+  //users?page=1&limit=5&role=Guest
 
   useEffect(() => {
     let aborted = false;
@@ -15,13 +24,18 @@ export function AdminUsers() {
         setLoading(true);
         setError(null);
 
-        const res = await fetch("/api/users");
+        const res = await fetch(
+          `/api/users?page=${currentPage}&limit=${limitUsers}&role=${roleFilter}`
+        );
 
         if (!res.ok) throw new Error("Error al cargar los usuarios");
 
         const data = await res.json();
 
+        console.log("data users:", data);
+
         if (!aborted) setUsers(data.data.users);
+        if (!aborted) setTotalPages(data.data.pagination.totalPages);
         if (!aborted) setFilterUsers(data.data.users);
       } catch (err) {
         if (!aborted) setError(err.message || "Error en useEffect AdminUsers");
@@ -32,45 +46,82 @@ export function AdminUsers() {
     loadUsers();
 
     return () => (aborted = true);
-  }, []);
-
-  useEffect(() => {
-    if (role === "") {
-      setFilterUsers(users);
-      return;
-    }
-
-    const filtered = users.filter(
-      (user) => user.role.toLowerCase() === role.toLowerCase()
-    );
-    setFilterUsers(filtered);
-  }, [role, users]);
+  }, [currentPage, limitUsers, roleFilter]);
 
   if (loading) return <p>Cargando usuarios ...</p>;
   if (error) return <p>Error: {error}</p>;
 
-  console.log(users);
-
   return (
     <section className="maxWidth m-auto">
-      <h2>Admin de usuarios</h2>
+      <h2 className="text-center fs-1 text-danger">Admin de usuarios</h2>
 
-      <div>
-        <label for="role-select">Choose a role:</label>
+      <section className="d-flex mb-3 justify-content-between">
+        <div>
+          <div className="mb-2">
+            <label for="role-select">Choose a role:</label>
 
-        <select
-          name="role"
-          id="role-select"
-          onChange={(e) => setRole(e.target.value)}
+            <select
+              name="role"
+              id="role-select"
+              className="text-center"
+              onChange={(e) => setRoleFilter(e.target.value)}
+            >
+              <option value="">-- Choose Role --</option>
+              <option value="">All</option>
+              <option value="Admin">Admin</option>
+              <option value="Guest">Guest</option>
+              <option value="User">User</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="umberUsers-select">Choose a numbers of users:</label>
+            <select
+              name="numberUsers"
+              id="numberUsers-select"
+              className="text-center"
+              onChange={(e) => setLimitUsers(e.target.value)}
+            >
+              <option value="">-- Choose number --</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <button
+            className="rounded-pill ms-5 mb-2 bg-primary"
+            onClick={() => navigate("/admin/users/add")}
+          >
+            Add User
+          </button>
+        </div>
+      </section>
+
+      <section className="d-flex justify-content-center m-5">
+        <button onClick={() => setCurrentPage(1)}>First Page</button>
+        <button
+          onClick={() => {
+            currentPage > 1 && setCurrentPage(currentPage - 1);
+          }}
         >
-          <option value="">--Please choose an option--</option>
-          <option value="">All</option>
-          <option value="admin">Admin</option>
-          <option value="guest">Guest</option>
-          <option value="user">User</option>
-        </select>
-        <button className="rounded-pill ms-5 mb-2 bg-primary">Add User</button>
-      </div>
+          Previus Page
+        </button>
+        <span className="fs-3 text-success px-3 py-auto">
+          Page {currentPage}/{totalPages}
+        </span>
+        <button
+          onClick={() => {
+            currentPage !== totalPages && setCurrentPage(currentPage + 1);
+          }}
+        >
+          Next Page
+        </button>
+        <button onClick={() => setCurrentPage(totalPages)}>Last Page</button>
+      </section>
 
       <table className="table table-dark table-striped p-4">
         <thead>
@@ -115,6 +166,8 @@ export function AdminUsers() {
           })}
         </tbody>
       </table>
+
+      
     </section>
   );
 }
