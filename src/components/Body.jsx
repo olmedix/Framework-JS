@@ -11,6 +11,7 @@ import { Profile } from "../pages/Profile.jsx";
 import { AdminHome } from "../pages/admin/AdminHome.jsx";
 import { AdminUsers } from "../pages/admin/AdminUsers.jsx";
 import { AddUser } from "../pages/admin/AddUser.jsx";
+import { UpdateUser } from "../pages/admin/UpdateUser.jsx";
 import { RequireRole } from "./guards/RequireRole.jsx";
 import { RequireUser } from "./guards/RequireUser.jsx";
 import { NotFound } from "../pages/NotFound.jsx";
@@ -52,6 +53,14 @@ export function Body() {
         component={() => (
           <RequireRole>
             <AddUser />
+          </RequireRole>
+        )}
+      />
+       <Route
+        path="/admin/users/update"
+        component={() => (
+          <RequireRole>
+            <UpdateUser />
           </RequireRole>
         )}
       />

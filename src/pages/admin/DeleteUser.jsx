@@ -24,7 +24,7 @@ export function DeleteUser({ setDeleteUserPage, userSelected }) {
 
       setSuccess(true);
 
-      alert("Usuario eliminado correctamente");
+      {success && alert("Usuario eliminado correctamente");}
       
     } catch (error) {
       setError(error.message);

@@ -53,7 +53,7 @@ export function AddUser() {
   return (
     <section className="maxWidth m-auto">
       <form onSubmit={handleSubmit}>
-        <h2>Add user</h2>
+        <h2 className="text-center fs-1 text-danger">Add user</h2>
 
         <div>
           <label className="form-label">Name:</label>

@@ -160,8 +160,14 @@ export function AdminUsers() {
                 <td>{user.role}</td>
 
                 <td>
-                  <i className="bi bi-pencil-fill text-warning-emphasis cursor-pointer"></i>
-                  <i 
+                  <i
+                    className="bi bi-pencil-fill text-warning-emphasis cursor-pointer"
+                    onClick={() => {
+                      localStorage.setItem("userToUpdate", JSON.stringify(user));
+                      navigate("/admin/users/update");
+                    }}
+                  ></i>
+                  <i
                     className="bi bi-trash-fill mx-3 text-danger cursor-pointer"
                     onClick={() => {
                       setDeleteUserPage(true);
@@ -194,7 +200,6 @@ export function AdminUsers() {
           setDeleteUserPage={setDeleteUserPage}
         />
       )}
-          
     </section>
   );
 }
