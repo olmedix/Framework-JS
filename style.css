@@ -90,6 +90,9 @@ button:focus-visible {
 .zindex-100{
   z-index: 100 !important;
 }
+.zindex-200{
+  z-index: 200 !important;
+}
 
 .cursor-pointer{
   cursor: pointer !important;

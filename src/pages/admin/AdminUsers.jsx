@@ -1,12 +1,14 @@
 import { useState, useEffect } from "../../core/hooks.js";
 import { navigate } from "../../core/router.js";
 import { ShowUser } from "./ShowUser.jsx";
+import { DeleteUser } from "./DeleteUser.jsx";
 
 export function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [userSelected, setUserSelected] = useState({});
   const [filterUsers, setFilterUsers] = useState(users);
   const [ShowUserPage, setShowUserPage] = useState(false);
+  const [deleteUserPage, setDeleteUserPage] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -159,7 +161,13 @@ export function AdminUsers() {
 
                 <td>
                   <i className="bi bi-pencil-fill text-warning-emphasis cursor-pointer"></i>
-                  <i className="bi bi-trash-fill mx-3 text-danger cursor-pointer"></i>
+                  <i 
+                    className="bi bi-trash-fill mx-3 text-danger cursor-pointer"
+                    onClick={() => {
+                      setDeleteUserPage(true);
+                      setUserSelected(user);
+                    }}
+                  ></i>
                   <i
                     className="bi bi-eye-fill text-info cursor-pointer"
                     onClick={() => {
@@ -180,6 +188,13 @@ export function AdminUsers() {
           setShowUserPage={setShowUserPage}
         />
       )}
+      {deleteUserPage && (
+        <DeleteUser
+          userSelected={userSelected}
+          setDeleteUserPage={setDeleteUserPage}
+        />
+      )}
+          
     </section>
   );
 }
