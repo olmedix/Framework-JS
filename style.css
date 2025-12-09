@@ -86,3 +86,11 @@ button:focus-visible {
   color: white !important;
   font-weight: 700 !important;
 }
+
+.zindex-100{
+  z-index: 100 !important;
+}
+
+.cursor-pointer{
+  cursor: pointer !important;
+} 

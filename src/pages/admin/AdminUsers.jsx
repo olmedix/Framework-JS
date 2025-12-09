@@ -1,9 +1,12 @@
 import { useState, useEffect } from "../../core/hooks.js";
 import { navigate } from "../../core/router.js";
+import { ShowUser } from "./ShowUser.jsx";
 
 export function AdminUsers() {
   const [users, setUsers] = useState([]);
+  const [userSelected, setUserSelected] = useState({});
   const [filterUsers, setFilterUsers] = useState(users);
+  const [ShowUserPage, setShowUserPage] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,8 +16,6 @@ export function AdminUsers() {
   const [currentPage, setCurrentPage] = useState(1);
   const [limitUsers, setLimitUsers] = useState(10);
   const [roleFilter, setRoleFilter] = useState("");
-
-  //users?page=1&limit=5&role=Guest
 
   useEffect(() => {
     let aborted = false;
@@ -157,9 +158,15 @@ export function AdminUsers() {
                 <td>{user.role}</td>
 
                 <td>
-                  <i className="bi bi-pencil-fill text-warning-emphasis"></i>
-                  <i className="bi bi-trash-fill mx-3 text-danger"></i>
-                  <i className="bi bi-eye-fill text-info"></i>
+                  <i className="bi bi-pencil-fill text-warning-emphasis cursor-pointer"></i>
+                  <i className="bi bi-trash-fill mx-3 text-danger cursor-pointer"></i>
+                  <i
+                    className="bi bi-eye-fill text-info cursor-pointer"
+                    onClick={() => {
+                      setShowUserPage(true);
+                      setUserSelected(user);
+                    }}
+                  ></i>
                 </td>
               </tr>
             );
@@ -167,7 +174,12 @@ export function AdminUsers() {
         </tbody>
       </table>
 
-      
+      {ShowUserPage && (
+        <ShowUser
+          userSelected={userSelected}
+          setShowUserPage={setShowUserPage}
+        />
+      )}
     </section>
   );
 }
